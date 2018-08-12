@@ -18,7 +18,10 @@ from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 
+from chat.views import ActionManager
+
 urlpatterns = [
+    path('', ActionManager.as_view(), name='manager'),
     path('chat/', include('chat.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),

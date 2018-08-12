@@ -14,18 +14,11 @@ from chat.models import ChatGroup
 class ActionManager(LoginRequiredMixin, TemplateView):
     template_name = 'manager.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(kwargs)
-        # TODO: MAKE LIST OF ALL SUBMODULES OF THE APP
-        links = dict()
-        context.update(links=links)
-        return context
-
 
 class AllowedChatGroups(LoginRequiredMixin, ListView):
     """Display possible chat groups for the logged user"""
     model = ChatGroup
-    template_name = 'chat/index.html'
+    template_name = 'chat/chat_rooms.html'
 
     def get_queryset(self):
         qs = super().get_queryset()

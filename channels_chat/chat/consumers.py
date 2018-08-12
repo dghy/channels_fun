@@ -1,6 +1,10 @@
 # chat/consumers.py
-from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+
+from channels.generic.websocket import AsyncWebsocketConsumer
+from django.shortcuts import get_object_or_404
+
+from chat.models import Message, ChatGroup
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -28,6 +32,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
+        chat_group = get_object_or_404(ChatGroup, id=self.room_name)
+        # save message in the DB
+        Message.objects.create(text=message,
+                               user=self.scope['user'],
+                               group=chat_group)
 
         # Send message to room group
         await self.channel_layer.group_send(

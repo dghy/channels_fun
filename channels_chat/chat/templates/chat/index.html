@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load chat_extras %}
+
+{% block content %}
+    <p>Select chat room to enter:</p>
+    <ul>
+        {% for room in chatgroup_list %}
+            <li><a href={{ chatgroup_urls|get_item:room.id }}>{{ room }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

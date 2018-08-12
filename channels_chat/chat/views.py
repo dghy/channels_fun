@@ -18,9 +18,8 @@ class ActionManager(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(kwargs)
         # TODO: MAKE LIST OF ALL SUBMODULES OF THE APP
         links = dict()
-
-
         context.update(links=links)
+        return context
 
 
 class AllowedChatGroups(LoginRequiredMixin, ListView):
@@ -39,11 +38,6 @@ class AllowedChatGroups(LoginRequiredMixin, ListView):
                              reverse("%s" % content_type.app_label,
                                      args=(group.id,)))
                             for group in context['chatgroup_list']]
-        # chat_groups_urls = list(map(lambda x: (x[0],
-        #                             x[1].replace('(', '')
-        #                                 .replace(')', '')),
-        #                             chat_groups_urls))
-
         context.update(chatgroup_urls=dict(chat_groups_urls))
         return context
 

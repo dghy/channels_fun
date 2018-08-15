@@ -3,9 +3,19 @@
 
 {% block content %}
     <p>Select chat room to enter:</p>
-    <ul>
+    <table border="1">
+        <tr>
+            <th>Group Name</th>
+            <th>Manage</th>
+        </tr>
         {% for room in chatgroup_list %}
-            <li><a href={{ chatgroup_urls|get_item:room.id }}>{{ room }}</a></li>
+        <tr>
+            <td align="center"><a href={{ chatgroup_urls|get_item:room.id }}>{{ room }}</a></td>
+            <td align="center">
+                <button class="btn btn-primary btn-xs" onclick="location.href='{% url 'chat' room_id=room.id %}'">Enter chat</button>
+                <button class="btn btn-primary btn-xs" onclick="location.href='{% url 'add_user_to_chat' pk=room.id %}'">Manage users</button>
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
 {% endblock %}

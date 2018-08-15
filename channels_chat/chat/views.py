@@ -3,12 +3,14 @@ import json
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import render
-from django.urls import reverse
+from django.http import Http404
+from django.shortcuts import get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, CreateView, UpdateView
 
-from chat.models import ChatGroup
+from chat.forms import AddUserToChatForm
+from chat.models import ChatGroup, Message, CustomUser
 
 
 class ActionManager(LoginRequiredMixin, TemplateView):
@@ -39,6 +41,35 @@ class RoomView(LoginRequiredMixin, TemplateView):
     template_name = 'chat/room.html'
 
     def get_context_data(self, **kwargs):
+        room_id = mark_safe(json.dumps(kwargs['room_id']))
+        messages = Message.objects.filter(group_id=room_id).order_by('-published')[:15]
+        users = json.dumps(list(CustomUser.objects.filter(chat_groups__id__in=room_id).values_list('username')))
+        messages_json = \
+            json.dumps(dict(map(
+                lambda x: (x.id, (x.text, x.user.username, x.published.strftime('%y-%m-%d %H:%M:%S'))),
+                messages)))
+
         context = super().get_context_data(**kwargs)
-        context.update(room_name_json=mark_safe(json.dumps(kwargs['room_id'])))
+        context.update(room_name_json=room_id, messages=messages_json,
+                       users=users)
         return context
+
+
+class AddUserToChatView(LoginRequiredMixin, UpdateView):
+    template_name = 'chat/add_user_to_chat_template.html'
+    form_class = AddUserToChatForm
+    success_url = reverse_lazy('select_chat')
+
+    def get_queryset(self):
+        chat_id = str(self.kwargs['pk'])
+        if not chat_id.isdigit():
+            raise Http404
+        return ChatGroup.objects.filter(id=chat_id)
+
+
+# class AddUserView(LoginRequiredMixin, CreateView):
+#     template_name = 'chat/add_user_form_template.html'
+#     form_class = AddUserToChatForm
+#     success_url = reverse_lazy('select_chat')
+
+

@@ -1,12 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" ng-app>
 <head>
     <meta charset="utf-8"/>
     <title>Chat Rooms</title>
+    <!--jquery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--bootstrap and css with it-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!--angular js CDN-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular.min.js"></script>
+    {% load static %}
+    <!--custom css file-->
+    <link rel="stylesheet" href="{% static "chat/styles.css" %}"/>
 </head>
 <body>
-    {% if request.user.is_authenticated %}
-        <a href="/accounts/logout/">Logout</a>
+    {% if logged %}
+        Logged as: {{ logged_user }}
+        <input type="button" class="login btn btn-primary btn-xs"
+               onclick="location.href='{% url 'logout' %}';"
+               value="Logout"/>
+    {% else %}
+        <input type="button" class="login btn btn-primary btn-xs"
+               onclick="location.href='{% url 'login' %}';"
+               value="Login"/>
+
+{#        <input type="button" class=".login"#}
+{#               onclick="location.href='{% url 'add-user' %}';"#}
+{#               value="Create User"/>#}
     {% endif %}
     {% block content %}
     {% endblock %}

@@ -2,9 +2,10 @@
 import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-from chat.models import Message, ChatGroup
+from chat.models import Message, ChatGroup, CustomUser
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -32,26 +33,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
+        user_id = text_data_json['user_id']
+        user = get_object_or_404(CustomUser, id=user_id)
+        if not user_id.isdigit():
+            raise Http404
+
         chat_group = get_object_or_404(ChatGroup, id=self.room_name)
         # save message in the DB
-        Message.objects.create(text=message,
-                               user=self.scope['user'],
-                               group=chat_group)
+        message_object = Message.objects.create(text=message,
+                                                user=user,
+                                                group=chat_group)
 
-        # Send message to room group
+        # Send message to room group, generates event
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message
+                'message': message,
+                'date': str(message_object.published.strftime('%y-%m-%d %H:%M:%S')),
+                'user': user.username,
             }
         )
 
     # Receive message from room group
     async def chat_message(self, event):
-        message = event['message']
-
         # Send message to WebSocket
+        # this will be available in the 'data' key of MessageEvent
         await self.send(text_data=json.dumps({
-            'message': message
+            'message': event['message'],
+            'user': event['user'],
+            'date': event['date']
         }))

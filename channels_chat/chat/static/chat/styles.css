@@ -1,0 +1,11 @@
+th {
+    text-align: center;
+}
+
+#chat-log {
+    display: inline;
+}
+
+#chat-users {
+    display: inline;
+}

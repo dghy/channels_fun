@@ -1,0 +1,4 @@
+angular
+    .module('chatApp', [
+        // 'chatController',
+    ]);

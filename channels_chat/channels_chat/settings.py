@@ -32,12 +32,10 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'channels',
-    # 'rest_framework',
     'chat',
     'rest_api',
     'rest_framework',
     'rest_framework.authtoken',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

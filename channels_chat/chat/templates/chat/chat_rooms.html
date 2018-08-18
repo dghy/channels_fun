@@ -2,7 +2,8 @@
 {% load chat_extras %}
 
 {% block content %}
-    <p>Select chat room to enter:</p>
+    <button class="btn btn-primary btn-xs" onclick="location.href='{% url 'manager' %}'">Back to main</button>
+    <h3>Select chat room to enter</h3>
     <table border="1">
         <tr>
             <th>Group Name</th>

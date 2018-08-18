@@ -1,13 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-    </br>
-    <textarea id="chat-log" class="col-sm-8" rows="20"></textarea>
-    <textarea id="chat-users" class="col-sm-4" rows="10"></textarea><br/>
-
-    <input id="chat-message-input" type="text" size="100"/><br/>
-    <input id="chat-message-submit" class="btn btn-primary btn-xs" type="button" value="Send"/>
     <button class="btn btn-primary btn-xs" onclick="location.href='{% url 'select_chat' %}'">Exit ChatGroup</button>
+    <div>
+        <input id="chat-message-submit" class="btn btn-primary btn-xs block" type="button" value="Send"/>
+    </div>
+    <div>
+        <input class="block" id="chat-message-input" type="text" size="100"/>
+    </div>
+
+{#    <textarea id="chat-log" class="col-sm-8" rows="20"></textarea>#}
+    <ul id="chat-log" class="list-unstyled inline"></ul>
+    <ul id="chat-users" class="list-unstyled inline"></ul>
+
+{#    <textarea id="chat-users" class="col-sm-4" rows="10"></textarea><br/>#}
+
+
+
 <script>
+    function appendMessage(messageText) {
+        let $message = $('<li>');
+        $message.innerText = messageText;
+        $('#chat-log').append($message);
+        {#return $message#}
+    }
+
+
     let roomName = {{ room_name_json }};
     const chatSocket = new WebSocket(
         'ws://' + window.location.host +
@@ -18,27 +35,18 @@
     document.addEventListener("DOMContentLoaded", function(){
         // display all messeges in the chat-log textarea
         $.each(messages, function(messageKey) {
-            const user = messages[messageKey][1];
-            const message = messages[messageKey][0];
-            const timestamp = messages[messageKey][2];
-            document.querySelector('#chat-log').value +=
-                timestamp + ' ' + user + '> ' + message + '\n';
+            $('#chat-log').prepend(`<li>${messages[messageKey][2]} <b>${messages[messageKey][1]}</b> <p class='inline speech-bubble'>${messages[messageKey][0]}</p></li>`);
         });
         // display all users that have access to the chatGroup
         $.each(users, function(userIndex) {
-            document.querySelector('#chat-users').value +=
-                users[userIndex]+ '\n';
+            $('#chat-users').prepend(`<li>${users[userIndex]}</li>`);
         });
     });
 
     chatSocket.onmessage = function(event) {
         // display new message from socket
         const data = JSON.parse(event.data);
-        const message = data['message'];
-        const user = data['user'];
-        const date = data['date'];
-        document.querySelector('#chat-log').value +=
-            date + ' ' + user + '> ' + message + '\n';
+        $('#chat-log').prepend(`<li>${data['date']} <b>${data['user']}</b> <p class='inline speech-bubble'>${data['message']}</p></li>`);
     };
     chatSocket.onclose = function(event) {
         console.error('Chat socket closed unexpectedly');

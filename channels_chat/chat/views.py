@@ -67,6 +67,13 @@ class AddUserToChatView(LoginRequiredMixin, UpdateView):
         return ChatGroup.objects.filter(id=chat_id)
 
 
+class CreateChatGroup(CreateView):
+    model = ChatGroup
+    success_url = reverse_lazy('select_chat')
+    fields = '__all__'
+    template_name = 'chat/create_chat.html'
+
+
 # class AddUserView(LoginRequiredMixin, CreateView):
 #     template_name = 'chat/add_user_form_template.html'
 #     form_class = AddUserToChatForm

@@ -3,6 +3,11 @@
 
 {% block content %}
     <button class="btn btn-primary btn-xs" onclick="location.href='{% url 'manager' %}'">Back to main</button>
+    <button class="btn btn-primary btn-xs" onclick="location.href='{% url 'create_chat' %}'">Create chat group</button>
+
+    {% if not chatgroup_list %}
+    <h3>No chat group. You can always create new chat group.</h3>
+    {% else %}
     <h3>Select chat room to enter</h3>
     <table border="1">
         <tr>
@@ -18,5 +23,6 @@
             </td>
         </tr>
         {% endfor %}
+    {% endif %}
     </table>
 {% endblock %}

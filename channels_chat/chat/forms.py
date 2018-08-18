@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import ModelForm
 
-from chat.models import CustomUser, ChatGroup
+from chat.models import User, ChatGroup
 
 
 class AddUserToChatForm(ModelForm):

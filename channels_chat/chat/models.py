@@ -13,14 +13,6 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 
-class CustomUser(User):
-    class Meta:
-        proxy = True
-
-    def __str__(self):
-        return self.username
-
-
 class TimeStampModel(models.Model):
     published = models.DateTimeField(auto_now_add=True)
 
@@ -29,9 +21,9 @@ class TimeStampModel(models.Model):
 
 
 class ChatGroup(TimeStampModel):
-    admin = models.ForeignKey(CustomUser, null=True, blank=True,
+    admin = models.ForeignKey(User, null=True, blank=True,
                               on_delete=models.SET_NULL)
-    allowed_users = models.ManyToManyField(CustomUser, related_name='chat_groups')
+    allowed_users = models.ManyToManyField(User, related_name='chat_groups')
     name = models.CharField(max_length=255, default='Default Chat Group Name')
 
     def __str__(self):
@@ -40,7 +32,7 @@ class ChatGroup(TimeStampModel):
 
 class Message(TimeStampModel):
     text = models.CharField(max_length=255)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(ChatGroup, related_name='messages',
                               on_delete=models.CASCADE)
 

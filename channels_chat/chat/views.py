@@ -10,7 +10,7 @@ from django.utils.safestring import mark_safe
 from django.views.generic import ListView, TemplateView, CreateView, UpdateView
 
 from chat.forms import AddUserToChatForm
-from chat.models import ChatGroup, Message, CustomUser
+from chat.models import ChatGroup, Message, User
 
 
 class ActionManager(LoginRequiredMixin, TemplateView):
@@ -43,7 +43,7 @@ class RoomView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         room_id = mark_safe(json.dumps(kwargs['room_id']))
         messages = Message.objects.filter(group_id=room_id).order_by('-published')[:15]
-        users = json.dumps(list(CustomUser.objects.filter(chat_groups__id__in=room_id).values_list('username')))
+        users = json.dumps(list(User.objects.filter(chat_groups__id__in=room_id).values_list('username')))
         messages_json = \
             json.dumps(dict(map(
                 lambda x: (x.id, (x.text, x.user.username, x.published.strftime('%y-%m-%d %H:%M:%S'))),

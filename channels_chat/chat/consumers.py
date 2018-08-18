@@ -2,10 +2,11 @@
 import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-from chat.models import Message, ChatGroup, CustomUser
+from chat.models import Message, ChatGroup
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -34,7 +35,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         user_id = text_data_json['user_id']
-        user = get_object_or_404(CustomUser, id=user_id)
+        user = get_object_or_404(User, id=user_id)
         if not user_id.isdigit():
             raise Http404
 

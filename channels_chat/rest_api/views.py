@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
@@ -5,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from chat.models import Message, CustomUser, ChatGroup
+from chat.models import Message, ChatGroup
 from rest_api.serializers import MessageSerializer
 
 
@@ -18,7 +19,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     # permission_classes = (permissions.AllowAny,)
 
     def get_queryset(self):
-        user = get_object_or_404(CustomUser,
+        user = get_object_or_404(User,
                                  username=self.kwargs['user__username'])
         queryset = Message.objects.filter(user=user)
         return queryset
@@ -32,7 +33,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         return self.list(request)
 
     def create(self, request, *args, **kwargs):
-        user = get_object_or_404(CustomUser, id=request.user.id)
+        user = get_object_or_404(User, id=request.user.id)
         data = dict([(key, value) for key, value in request.data.items()])
 
         data.setdefault('text')

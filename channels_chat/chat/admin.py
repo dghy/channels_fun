@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 # from django.contrib.auth.models import User, Group
 
-from chat.models import ChatGroup, CustomUser
+from chat.models import ChatGroup
 
 # admin.autodiscover()
 # # remove default user and group from admin panel

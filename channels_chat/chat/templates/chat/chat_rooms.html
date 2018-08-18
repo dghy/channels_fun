@@ -2,10 +2,27 @@
 {% load chat_extras %}
 
 {% block content %}
-    <p>Select chat room to enter:</p>
-    <ul>
+    <button class="btn btn-primary btn-xs" onclick="location.href='{% url 'manager' %}'">Back to main</button>
+    <button class="btn btn-primary btn-xs" onclick="location.href='{% url 'create_chat' %}'">Create chat group</button>
+
+    {% if not chatgroup_list %}
+    <h3>No chat group. You can always create new chat group.</h3>
+    {% else %}
+    <h3>Select chat room to enter</h3>
+    <table border="1">
+        <tr>
+            <th>Group Name</th>
+            <th>Manage</th>
+        </tr>
         {% for room in chatgroup_list %}
-            <li><a href={{ chatgroup_urls|get_item:room.id }}>{{ room }}</a></li>
+        <tr>
+            <td align="center"><a href={{ chatgroup_urls|get_item:room.id }}>{{ room }}</a></td>
+            <td align="center">
+                <button class="btn btn-primary btn-xs" onclick="location.href='{% url 'chat' room_id=room.id %}'">Enter chat</button>
+                <button class="btn btn-primary btn-xs" onclick="location.href='{% url 'add_user_to_chat' pk=room.id %}'">Manage users</button>
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
+    {% endif %}
+    </table>
 {% endblock %}

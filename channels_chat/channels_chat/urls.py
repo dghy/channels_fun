@@ -23,6 +23,7 @@ from chat.views import ActionManager
 urlpatterns = [
     path('', ActionManager.as_view(), name='manager'),
     path('chat/', include('chat.urls')),
+    path('api/', include('rest_api.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
 ]

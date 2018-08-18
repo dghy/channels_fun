@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<div>
+    <h3>Select section</h3>
+    <ul>
+        <li><a href="admin/">Admin</a></li>
+        <li><a href="{% url "select_chat" %}">Chats</a></li>
+        <li><a href="">House Control Room</a></li>
+    </ul>
+</div>
 {% endblock %}

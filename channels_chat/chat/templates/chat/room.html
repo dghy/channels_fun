@@ -9,21 +9,15 @@
     </div>
 
 {#    <textarea id="chat-log" class="col-sm-8" rows="20"></textarea>#}
-    <ul id="chat-log" class="list-unstyled inline"></ul>
-    <ul id="chat-users" class="list-unstyled inline"></ul>
+    <ul id="chat-log" class="chat list-unstyled inline"></ul>
 
-{#    <textarea id="chat-users" class="col-sm-4" rows="10"></textarea><br/>#}
-
-
-
+    <ul id="chat-users" class="chat list-unstyled inline">
+        <li><h5>List of users</h5></li>
+    </ul>
 <script>
-    function appendMessage(messageText) {
-        let $message = $('<li>');
-        $message.innerText = messageText;
-        $('#chat-log').append($message);
-        {#return $message#}
+    function isMessageValid(message) {
+        return message.trim()
     }
-
 
     let roomName = {{ room_name_json }};
     const chatSocket = new WebSocket(
@@ -39,7 +33,7 @@
         });
         // display all users that have access to the chatGroup
         $.each(users, function(userIndex) {
-            $('#chat-users').prepend(`<li>${users[userIndex]}</li>`);
+            $('#chat-users').append(`<li>${users[userIndex]}</li>`);
         });
     });
 
@@ -52,22 +46,26 @@
         console.error('Chat socket closed unexpectedly');
     };
 
-    document.querySelector('#chat-message-input').focus();
+    {#document.querySelector('#chat-message-input').focus();#}
     document.querySelector('#chat-message-input').onkeyup = function(event) {
-        if (event.keyCode === 13) {  // enter, return
-            document.querySelector('#chat-message-submit').click();
+        // prevent sending empty messages
+        if (isMessageValid(this.value)) {
+            if (event.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
         }
     };
 
     document.querySelector('#chat-message-submit').onclick = function(event) {
-        // send message to the socket
         let messageInputDom = document.querySelector('#chat-message-input');
         let message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message,
-            'user_id': '{{ user.id }}',
-        }));
-
+        if (isMessageValid(message)) {
+            // send message to the socket
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'user_id': '{{ user.id }}',
+            }));
+        }
         messageInputDom.value = '';
     };
 </script>

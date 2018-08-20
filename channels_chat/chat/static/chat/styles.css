@@ -3,18 +3,24 @@ th {
 }
 
 .inline {
-    display: inline;
+    display: inline-block;
 }
 .speech-bubble {
 	position: relative;
 	background: #00aabb;
 	border-radius: .4em;
-    margin: 20px;
-    padding: 8px;
+    margin: 1px 1px 1px 15px;
+    padding: .5em;
 }
 
 #chat-log li {
     padding: 10px;
+}
+
+#chat-users {
+	float: right;
+	width: 10%;
+	border: 1px solid black;
 }
 
 .speech-bubble:after {

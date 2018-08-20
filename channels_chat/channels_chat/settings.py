@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'channels',
     'chat',
+    'house_manager',
     'rest_api',
     'rest_framework',
     'rest_framework.authtoken',

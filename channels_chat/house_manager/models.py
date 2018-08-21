@@ -1,6 +1,6 @@
 from django.db import models
+from django.utils import timezone
 
-# Create your models here.
 from chat.models import TimeStampModel
 
 
@@ -14,3 +14,4 @@ class ScheduledEvent(TimeStampModel):
     description = models.CharField(max_length=255)
     event_type = models.SmallIntegerField(choices=EVENT_TYPE)
     color = models.CharField(max_length=10)
+    date_of_event = models.DateField(default=timezone.localtime().now())

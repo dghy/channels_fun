@@ -1,16 +1,25 @@
 # chat/views.py
 import json
+from time import sleep
+
+
+from gpiozero import LED
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
+from django.views.generic.base import RedirectView
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
 from django.views.generic import ListView, TemplateView, CreateView, UpdateView
 
 from chat.forms import AddUserToChatForm
 from chat.models import ChatGroup, Message, User
+
+# GPIO 17 on Raspberry3 board
+red = LED(17)
+
 
 
 class ActionManager(LoginRequiredMixin, TemplateView):
@@ -43,6 +52,7 @@ class RoomView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         room_id = mark_safe(json.dumps(kwargs['room_id']))
         messages = Message.objects.filter(group_id=room_id).order_by('-published')[:15]
+        # TODO: use serializer?
         users = json.dumps(list(User.objects.filter(chat_groups__id__in=room_id).values_list('username')))
         messages_json = \
             json.dumps(dict(map(
@@ -67,7 +77,7 @@ class AddUserToChatView(LoginRequiredMixin, UpdateView):
         return ChatGroup.objects.filter(id=chat_id)
 
 
-class CreateChatGroup(CreateView):
+class CreateChatGroup(LoginRequiredMixin, CreateView):
     model = ChatGroup
     success_url = reverse_lazy('select_chat')
     fields = '__all__'
@@ -79,4 +89,17 @@ class CreateChatGroup(CreateView):
 #     form_class = AddUserToChatForm
 #     success_url = reverse_lazy('select_chat')
 
+
+class ToggleLight(LoginRequiredMixin, RedirectView):
+    http_method_names = ['get', 'head', 'option']
+    url = reverse_lazy('manager')
+
+    def get(self, request, *args, **kwargs):
+
+        print(red.is_active, type(red.is_active))
+        if not red.is_active:
+            red.on()
+        else:
+            red.off()
+        return redirect('manager')
 

@@ -37,4 +37,4 @@ class Message(TimeStampModel):
                               on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.published.strftime('%y-%m-%d %H:%M:%S')} by {self.user}."
+        return self.published.strftime("%y-%m-%d %H:%M:%S") + ' by ' + str(self.user)

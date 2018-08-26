@@ -1,8 +1,8 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-# Create your views here.
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
